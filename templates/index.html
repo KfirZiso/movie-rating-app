@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>מערכת לחיזוי דירוג סרטים</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f4f7f6; color: #333; }
+        .container { max-width: 650px; background: white; padding: 25px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); margin: 0 auto; }
+        h1 { text-align: center; color: #2c3e50; }
+        .form-group { margin-bottom: 15px; display: flex; flex-direction: column; }
+        label { font-weight: bold; margin-bottom: 5px; color: #34495e; }
+        input[type="number"], select { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        button { width: 100%; padding: 12px; background-color: #27ae60; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        button:hover { background-color: #219a52; }
+        .result-box { margin-top: 25px; padding: 15px; background-color: #e8f8f5; border-right: 5px solid #2cc990; border-radius: 4px; text-align: center; font-size: 18px; font-weight: bold; }
+        
+        /* עיצוב ייעודי לרשימת הז'אנרים */
+        .genres-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .genre-item { display: flex; align-items: center; gap: 10px; background: #f9f9f9; padding: 8px; border-radius: 4px; border: 1px solid #eee; }
+        .genre-item input { width: 18px; height: 18px; cursor: pointer; }
+        .genre-item label { margin: 0; cursor: pointer; font-weight: normal; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>חיזוי דירוג סרטים (חלק 3)</h1>
+    <p style="text-align: center;">הזינו את פרמטרי הסרט כדי לקבל תחזית לדירוג הממוצע בזמן אמת</p>
+    
+    <form action="/" method="post">
+        
+        <div class="grid-2">
+            <div class="form-group">
+                <label for="runtimeMinutes">אורך הסרט (בדקות):</label>
+                <input type="number" id="runtimeMinutes" name="runtimeMinutes" placeholder="לדוגמה: 120" required min="1">
+            </div>
+            
+            <div class="form-group">
+                <label for="genre_count">מספר ז'אנרים משויכים:</label>
+                <input type="number" id="genre_count" name="genre_count" placeholder="לדוגמה: 2" required min="1">
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="form-group">
+                <label for="num_a_list_actors">מספר שחקני מדרג א' (A-List):</label>
+                <input type="number" id="num_a_list_actors" name="num_a_list_actors" placeholder="לדוגמה: 0" required min="0">
+            </div>
+            
+            <div class="form-group">
+                <label for="runtime_category_num">קטגוריית אורך (מספרי):</label>
+                <input type="number" id="runtime_category_num" name="runtime_category_num" placeholder="לדוגמה: 1" required min="0">
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="form-group">
+                <label for="is_post_imdb">האם הסרט הופק לאחר הקמת IMDb?</label>
+                <select id="is_post_imdb" name="is_post_imdb" required>
+                    <option value="" disabled selected hidden>בחר אפשרות...</option>
+                    <option value="1">כן (1)</option>
+                    <option value="0">לא (0)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="is_english">האם השפה המרכזית היא אנגלית?</label>
+                <select id="is_english" name="is_english" required>
+                    <option value="" disabled selected hidden>בחר אפשרות...</option>
+                    <option value="1">כן (1)</option>
+                    <option value="0">לא (0)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="is_usa">האם הסרט הופק בארה"ב?</label>
+            <select id="is_usa" name="is_usa" required>
+                <option value="" disabled selected hidden>בחר אפשרות...</option>
+                <option value="1">כן (1)</option>
+                <option value="0">לא (0)</option>
+            </select>
+        </div>
+
+        <h3 style="border-bottom: 2px solid #ecf0f1; padding-bottom: 5px; margin-top: 20px; color: #7f8c8d;">בחרו את ז'אנרי הסרט:</h3>
+        
+        <div class="genres-container">
+            <div class="genre-item">
+                <input type="checkbox" id="genre_Action" name="genres" value="genre_Action">
+                <label for="genre_Action">פעולה (Action)</label>
+            </div>
+            <div class="genre-item">
+                <input type="checkbox" id="genre_Comedy" name="genres" value="genre_Comedy">
+                <label for="genre_Comedy">קומדיה (Comedy)</label>
+            </div>
+            <div class="genre-item">
+                <input type="checkbox" id="genre_Drama" name="genres" value="genre_Drama">
+                <label for="genre_Drama">דרמה (Drama)</label>
+            </div>
+            <div class="genre-item">
+                <input type="checkbox" id="genre_Thriller" name="genres" value="genre_Thriller">
+                <label for="genre_Thriller">מתח (Thriller)</label>
+            </div>
+            <div class="genre-item">
+                <input type="checkbox" id="genre_Romance" name="genres" value="genre_Romance">
+                <label for="genre_Romance">רומנטיקה (Romance)</label>
+            </div>
+            <div class="genre-item">
+                <input type="checkbox" id="genre_Sci-Fi" name="genres" value="genre_Sci-Fi">
+                <label for="genre_Sci-Fi">מדע בדיוני (Sci-Fi)</label>
+            </div>
+            <div class="genre-item">
+                <input type="checkbox" id="genre_Horror" name="genres" value="genre_Horror">
+                <label for="genre_Horror">אימה (Horror)</label>
+            </div>
+            <div class="genre-item">
+                <input type="checkbox" id="genre_Documentary" name="genres" value="genre_Documentary">
+                <label for="genre_Documentary">דוקומנטרי (Documentary)</label>
+            </div>
+        </div>
+
+        <button type="submit">חשב תחזית לדירוג הסרט (Predict)</button>
+    </form>
+
+    {% if prediction is not none %}
+        <div class="result-box">
+            הדירוג המשוער של המודל עבור הסרט הוא: <span style="color: #27ae60; font-size: 24px;">{{ prediction }}</span>
+        </div>
+    {% endif %}
+</div>
+
+</body>
+</html>
