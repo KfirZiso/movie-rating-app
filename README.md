@@ -9,9 +9,11 @@ This project is a web-based application built with Flask that predicts movie rat
 ---
 
 ## 1. Project Description 📝
-The application provides an interface for users to input various characteristics of a movie (such as release year, runtime, and number of A-list actors) and get an instant predicted rating based on an advanced regression pipeline.
-* **Backend:** Flask API (`api.py`) that handles JSON payloads, performs data preprocessing, and serves model predictions using a Scikit-Learn pipeline.
-* **Frontend:** Interactive HTML webpage (`templates/index.html`) featuring real-time input fields, checkbox selections for genres, and asynchronous AJAX requests with beautiful CSS status indicators.
+
+The application provides an interface for users to input movie characteristics such as runtime, number of A-list actors, language, country, IMDb period, and genres.  
+After submitting the form, the Flask server processes the data, prepares it for the trained machine learning model, and returns an instant predicted movie rating.
+* **Backend:** Flask API (`api.py`) that handles JSON payloads, performs data preprocessing, and serves model predictions using a Scikit-Learn trained model.
+* **Frontend:** Interactive HTML webpage (`templates/index.html`) featuring input fields, genre checkboxes, asynchronous fetch requests, and dynamic result/error display.
 
 ---
 
@@ -55,19 +57,22 @@ Once the server is running, open your preferred web browser (e.g., Google Chrome
 
 ---
 
-## 5. Input Fields & Expected Value Ranges 📊
+## 5. Input Fields & Expected Values 📊
 
-The model expects the following input fields via the UI form. The frontend and backend validate these inputs to ensure proper data ranges before processing:
+The model expects the following input fields via the UI form:
 
-| Field Name | Data Type | Expected Range / Options | Description |
+| Field Name | Data Type | Expected Values / Options | Description |
 | :--- | :--- | :--- | :--- |
-| **Runtime (Minutes)** | Integer | `1 - 500` | Total duration of the movie in minutes. |
-| **A-List Actors** | Integer | `0 - 20` | Number of top-tier (A-list) actors in the main cast. |
-| **Is Post IMDb?** | Select / Binary | `Yes (1) / No (0)` | Indicates if the movie was produced after the launch of IMDb. |
-| **Is English?** | Select / Binary | `Yes (1) / No (0)` | Indicates if the primary language of the movie is English. |
-| **Is USA?** | Select / Binary | `Yes (1) / No (0)` | Indicates if the movie was produced in the USA. |
-| **Genres** | Checkboxes | Multiple choice (Action, Comedy, Drama, Sci-Fi, Thriller, etc.) | One or more genres associated with the movie. |
+| **runtimeMinutes** | Number | Example: `120` | Total duration of the movie in minutes. |
+| **num_a_list_actors** | Integer | Example: `2` | Number of A-list actors in the movie. |
+| **is_post_imdb** | Binary | `1` = Yes, `0` = No | Indicates whether the movie was produced after IMDb was founded. |
+| **is_english** | Binary | `1` = Yes, `0` = No | Indicates whether the main language is English. |
+| **is_usa** | Binary | `1` = Yes, `0` = No | Indicates whether the movie was produced in the USA. |
+| **genres** | Checkboxes | Action, Comedy, Drama, Thriller, Romance, Sci-Fi, Horror, Documentary | One or more genres associated with the movie. |
 
+### Error Handling & Validations:
+* **HTTP 400 (Bad Request):** Returned when required fields are missing, empty, or contain invalid values, such as text instead of a number.
+* **HTTP 500 (Internal Server Error):** Returned when an unexpected server-side error occurs.
 ### Error Handling & Validations:
 * **HTTP 400 (Bad Request):** Triggered if required fields are missing, empty, or fall outside the valid ranges listed above.
 * **HTTP 500 (Internal Server Error):** Triggered if an unexpected internal server crash occurs (e.g., a missing `trained_model.pkl` file or a runtime version/mathematical anomaly).
