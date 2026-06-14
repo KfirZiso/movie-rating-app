@@ -144,7 +144,7 @@ document.getElementById('movieForm').addEventListener('submit', function(e) {
             // מקרה הצלחה: מציג את הניבוי בקופסה ירוקה בתחתית
             resultBox.style.backgroundColor = '#e8f8f5';
             resultBox.style.borderRight = '5px solid #2cc990';
-            predSpan.innerHTML = `הדירוג המשוער של המודל עבור הסרט הוא: <span style="color: #27ae60; font-size: 24px;">${data.predicted_rating}</span>`;
+            predSpan.innerHTML = `Predicted Rating: <span style="color: #27ae60; font-size: 24px;">${data.predicted_rating} / 10</span>`;
             resultBox.style.display = 'block';
         } else {
             // מקרה שגיאה: (סטטוס 400) - בדיקה האם חזרו שדות ספציפיים שכשלו
