@@ -1,7 +1,10 @@
+import pandas as pd
 import os
 import pickle
-import pandas as pd
+import pandas as pd  # שורת הייבוא המתוקנת!
 from flask import Flask, render_template, request, jsonify
+
+# תיקון קריטי: ייבוא פונקציית העיבוד המקורית מחלק 2 של המטלה למניעת כפילות קוד!
 from assets_data_prep import prepare_data
 
 app = Flask(__name__)
@@ -52,11 +55,12 @@ def predict():
                 "invalid_fields": errors_dict  # Returns all field errors combined
             }), 400
 
-        # Steps 2 & 3: Create DataFrame and run feature engineering behind the scenes (Using the imported function)
-        df_input = prepare_data(data_json)
+        # Steps 2 & 3: Convert the JSON dict into a one-row DataFrame so prepare_data can use it
+        df_input = pd.DataFrame([data_json])
+        df_processed = prepare_data(df_input)
         
         # Step 4: Execute model.predict on the processed dataframe row
-        pred_value = pipeline.predict(df_input)[0]
+        pred_value = pipeline.predict(df_processed)[0]
         prediction = round(float(pred_value), 2)
         
         # Step 5: Return successful prediction response payload containing predicted_rating
