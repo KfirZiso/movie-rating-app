@@ -2,6 +2,7 @@ import os
 import pickle
 import pandas as pd
 from flask import Flask, render_template, request, jsonify
+from assets_data_prep import prepare_data
 
 app = Flask(__name__)
 
@@ -9,48 +10,6 @@ app = Flask(__name__)
 MODEL_PATH = "trained_model.pkl"
 with open(MODEL_PATH, "rb") as file:
     pipeline = pickle.load(file)
-
-def prepare_data(data_json):
-    """
-    Background data processing logic.
-    Takes validated inputs from the JSON payload and engineers features for the model.
-    """
-    runtime = float(data_json.get("runtimeMinutes"))
-    selected_genres = data_json.get("genres", [])
-    
-    # 1. Automatically calculate the total number of selected genres
-    genre_count = len(selected_genres) if selected_genres else 1
-    
-    # 2. Automatically map runtime into duration categories based on Part 2 logic
-    if runtime < 90:
-        runtime_category_num = 0
-    elif runtime <= 150:
-        runtime_category_num = 1
-    else:
-        runtime_category_num = 2
-
-    # 3. Construct the comprehensive dictionary containing all exact features expected by the pipeline
-    processed_dict = {
-        "runtimeMinutes": runtime,
-        "genre_count": genre_count,
-        "is_post_imdb": int(data_json.get("is_post_imdb")),
-        "num_a_list_actors": int(data_json.get("num_a_list_actors")),
-        "is_english": int(data_json.get("is_english")),
-        "is_usa": int(data_json.get("is_usa")),
-        "runtime_category_num": runtime_category_num,
-        
-        # Binary genre mapping (1 if checked, 0 otherwise)
-        "genre_Action": 1 if "genre_Action" in selected_genres else 0,
-        "genre_Comedy": 1 if "genre_Comedy" in selected_genres else 0,
-        "genre_Drama": 1 if "genre_Drama" in selected_genres else 0,
-        "genre_Thriller": 1 if "genre_Thriller" in selected_genres else 0,
-        "genre_Romance": 1 if "genre_Romance" in selected_genres else 0,
-        "genre_Sci-Fi": 1 if "genre_Sci-Fi" in selected_genres else 0,
-        "genre_Horror": 1 if "genre_Horror" in selected_genres else 0,
-        "genre_Documentary": 1 if "genre_Documentary" in selected_genres else 0
-    }
-    
-    return pd.DataFrame([processed_dict])
 
 @app.route("/", methods=["GET"])
 def index():
@@ -93,7 +52,7 @@ def predict():
                 "invalid_fields": errors_dict  # Returns all field errors combined
             }), 400
 
-        # Steps 2 & 3: Create DataFrame and run feature engineering behind the scenes
+        # Steps 2 & 3: Create DataFrame and run feature engineering behind the scenes (Using the imported function)
         df_input = prepare_data(data_json)
         
         # Step 4: Execute model.predict on the processed dataframe row
