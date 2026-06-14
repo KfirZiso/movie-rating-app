@@ -15,7 +15,7 @@
         button:hover { background-color: #219a52; }
         .result-box { margin-top: 25px; padding: 15px; background-color: #e8f8f5; border-right: 5px solid #2cc990; border-radius: 4px; text-align: center; font-size: 18px; font-weight: bold; display: none; }
         
-        /* עיצוב הודעות השגיאה הדינמיות מתחת לשדות הקלט */
+        /* Input error validation styles */
         .error-message { color: #e74c3c; font-size: 13px; margin-top: 5px; font-weight: bold; display: none; }
         .input-error { border-color: #e74c3c !important; background-color: #fdf2f2; }
 
@@ -91,7 +91,7 @@
             <div class="genre-item"><input type="checkbox" name="genres" value="genre_Documentary" id="genre_Documentary"><label for="genre_Documentary">דוקומנטרי (Documentary)</label></div>
         </div>
 
-        <button type="submit">Predict Rating</button>
+        <button type="submit">חשב תחזית לדירוג הסרט (Predict)</button>
     </form>
 
     <div id="resultBox" class="result-box">
@@ -101,20 +101,20 @@
 
 <script>
 document.getElementById('movieForm').addEventListener('submit', function(e) {
-    e.preventDefault(); // מניעת רענון עמוד אוטומטי
+    e.preventDefault(); // Prevent default asynchronous form submission and page reload
     
-    // ניקוי ואיפוס כל עיצובי והודעות השגיאה הקודמות מהמסך
+    // Clear and reset all previous input error decorations and error text fields
     document.querySelectorAll('.error-message').forEach(el => { el.style.display = 'none'; el.innerText = ''; });
     document.querySelectorAll('input[type="text"], select').forEach(el => el.classList.remove('input-error'));
     document.getElementById('resultBox').style.display = 'none';
     
-    // איסוף ז'אנרים שנבחרו
+    // Extract selected movie genres from checked checkboxes
     let checkedGenres = [];
     document.querySelectorAll('input[name="genres"]:checked').forEach(cb => {
         checkedGenres.push(cb.value);
     });
 
-    // בניית גוף הנתונים לשליחה בפורמט JSON
+    // Build the request payload payload mapping keys exactly to the API validation requirements
     let movieData = {
         runtimeMinutes: document.getElementById('runtimeMinutes').value,
         num_a_list_actors: document.getElementById('num_a_list_actors').value,
@@ -126,14 +126,14 @@ document.getElementById('movieForm').addEventListener('submit', function(e) {
 
     let statusCode = 200;
 
-    // שליחת בקשת POST אסינכרונית לשרת ה-Flask
+    // Send asynchronous POST request to the back-end Flask application API
     fetch('/predict', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(movieData)
     })
     .then(response => {
-        statusCode = response.status; // שמירת קוד הסטטוס (200, 400, 500)
+        statusCode = response.status; // Capture the response status code (e.g., 200, 400, 500)
         return response.json();
     })
     .then(data => {
@@ -141,15 +141,15 @@ document.getElementById('movieForm').addEventListener('submit', function(e) {
         let predSpan = document.getElementById('predictionValue');
         
         if (statusCode === 200) {
-            // מקרה הצלחה: מציג את הניבוי בקופסה ירוקה בתחתית
+            // Success Scenario: Display rating prediction in the green bottom box
             resultBox.style.backgroundColor = '#e8f8f5';
             resultBox.style.borderRight = '5px solid #2cc990';
-            predSpan.innerHTML = `Predicted Rating: <span style="color: #27ae60; font-size: 24px;">${data.predicted_rating} / 10</span>`;
+            predSpan.innerHTML = `הדירוג המשוער של המודל עבור הסרט הוא: <span style="color: #27ae60; font-size: 24px;">${data.predicted_rating}</span>`;
             resultBox.style.display = 'block';
         } else {
-            // מקרה שגיאה: (סטטוס 400) - בדיקה האם חזרו שדות ספציפיים שכשלו
+            // Error Scenario: Handle validation failures (HTTP 400 Bad Request)
             if (data.invalid_fields) {
-                // רצים בלולאה על כל השדות הפגומים שחזרו מה-API ומאירים את כולם באדום במקביל
+                // Loop through all validation errors returned from the API and highlight fields simultaneously
                 Object.keys(data.invalid_fields).forEach(fieldId => {
                     if (document.getElementById(fieldId)) {
                         let inputElement = document.getElementById(fieldId);
@@ -162,7 +162,7 @@ document.getElementById('movieForm').addEventListener('submit', function(e) {
                     }
                 });
             } else {
-                // מקרה קריסה פנימית: (סטטוס 500) - מציג הודעה כללית בקופסה אדומה בתחתית
+                // Failure Scenario: Handle backend runtime crashes (HTTP 500 Internal Server Error)
                 resultBox.style.backgroundColor = '#fce4d6';
                 resultBox.style.borderRight = '5px solid #e74c3c';
                 predSpan.innerHTML = `<span style="color: #c0392b; font-weight: bold; font-size: 18px;">Status Code: ${statusCode}</span><br><span style="font-size: 15px; color: #333;">${data.error}</span>`;
