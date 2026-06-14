@@ -91,7 +91,7 @@
             <div class="genre-item"><input type="checkbox" name="genres" value="genre_Documentary" id="genre_Documentary"><label for="genre_Documentary">דוקומנטרי (Documentary)</label></div>
         </div>
 
-        <button type="submit">חשב תחזית לדירוג הסרט (Predict)</button>
+        <button type="submit">Predict Rating</button>
     </form>
 
     <div id="resultBox" class="result-box">
@@ -144,7 +144,7 @@ document.getElementById('movieForm').addEventListener('submit', function(e) {
             // Success Scenario: Display rating prediction in the green bottom box
             resultBox.style.backgroundColor = '#e8f8f5';
             resultBox.style.borderRight = '5px solid #2cc990';
-            predSpan.innerHTML = `הדירוג המשוער של המודל עבור הסרט הוא: <span style="color: #27ae60; font-size: 24px;">${data.predicted_rating}</span>`;
+            predSpan.innerHTML = `Predicted Rating: <span style="color: #27ae60; font-size: 24px;">${data.predicted_rating} / 10</span>`;
             resultBox.style.display = 'block';
         } else {
             // Error Scenario: Handle validation failures (HTTP 400 Bad Request)
