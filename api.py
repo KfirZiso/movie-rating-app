@@ -6,7 +6,7 @@ from flask import Flask, render_template, request, jsonify
 app = Flask(__name__)
 
 # Load the trained model pipeline during server startup
-MODEL_PATH = "model.pkl"
+MODEL_PATH = "trained_model.pkl"
 with open(MODEL_PATH, "rb") as file:
     pipeline = pickle.load(file)
 
