@@ -1,13 +1,7 @@
 import pandas as pd
 import os
 import pickle
-<<<<<<< Updated upstream
-import pandas as pd  # שורת הייבוא המתוקנת!
-=======
->>>>>>> Stashed changes
 from flask import Flask, render_template, request, jsonify
-
-# תיקון קריטי: ייבוא פונקציית העיבוד המקורית מחלק 2 של המטלה למניעת כפילות קוד!
 from assets_data_prep import prepare_data
 
 app = Flask(__name__)
