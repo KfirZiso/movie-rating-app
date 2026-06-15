@@ -1,7 +1,10 @@
 import pandas as pd
 import os
 import pickle
+<<<<<<< Updated upstream
 import pandas as pd  # שורת הייבוא המתוקנת!
+=======
+>>>>>>> Stashed changes
 from flask import Flask, render_template, request, jsonify
 
 # תיקון קריטי: ייבוא פונקציית העיבוד המקורית מחלק 2 של המטלה למניעת כפילות קוד!
@@ -16,7 +19,6 @@ with open(MODEL_PATH, "rb") as file:
 
 @app.route("/", methods=["GET"])
 def index():
-    # GET method: Cleanly renders the initial empty index.html form
     return render_template("index.html")
 
 @app.route("/predict", methods=["POST"])
